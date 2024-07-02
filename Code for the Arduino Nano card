@@ -1,0 +1,98 @@
+int potPin = A1; // Broche analogique pour le potentiomètre // Analog pin for the potentiometer.
+int buttonPin = 5; // Broche pour le bouton // Pin for the button
+int buzzerPin = 6; // Broche pour le buzzer // Pin for the buzzer
+int redPin = 9; // Broche pour la LED rouge // Pin for the red LED
+int greenPin = 10; // Broche pour la LED verte // Pin for the green Led
+int bluePin = 11; // Broche pour la LED bleue // Pin for the blue LED
+bool buttonState = true; // État du bouton // Button state
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP); // Bouton en entrée avec résistance pull-up interne // Button as input with internal pull-up resistor.
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+}
+
+void loop() {
+  int potValue = analogRead(potPin); // Lecture de la valeur du potentiomètre // Reading the potentiometer value
+  int ledLevel = map(potValue, 0, 1023, 0, 4); // Conversion de la valeur pour contrôler les LEDs // Conversion of the value to control the RGB leds
+
+  // Détermination de la couleur de la LED RGB // The case of the RGB led according to the value of the potentiometer
+  switch (ledLevel) {
+    case 0:
+      digitalWrite(redPin, HIGH);
+      digitalWrite(greenPin, HIGH);
+      digitalWrite(bluePin, HIGH);
+      break;
+    case 1:
+      digitalWrite(redPin, HIGH);
+      digitalWrite(greenPin, LOW);
+      digitalWrite(bluePin, HIGH);
+      break;
+    case 2:
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin, HIGH);
+      digitalWrite(bluePin, LOW);
+      break;
+    case 3:
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin, HIGH);
+      digitalWrite(bluePin, HIGH);
+      break;
+  }
+
+  // Lecture de l'état du bouton // Reading the button state
+  if (digitalRead(buttonPin) == HIGH) { // Bouton appuyé // Button pressed
+    buttonState = true;
+  } else {
+    buttonState = false;
+  }
+
+
+// Si le bouton est appuyé, le buzzer bip et la lumière clignote // If the button is pressed, the buzzer bip and the led blink
+  if (buttonState) {
+    for (int i = 0; i < 3; i++) {
+      digitalWrite(buzzerPin, HIGH); // Activer le buzzer // active the buzzer
+      switch (ledLevel) {
+        case 0:
+          digitalWrite(redPin, HIGH);
+          digitalWrite(greenPin, HIGH);
+          digitalWrite(bluePin, HIGH);
+          break;
+        case 1:
+          digitalWrite(greenPin, LOW);
+          break;
+        case 2:
+          digitalWrite(redPin, LOW);
+          digitalWrite(bluePin, LOW);
+          break;
+        case 3:
+          digitalWrite(redPin, LOW);
+          break;
+      }
+      delay(250); // 250 ms ON
+
+      digitalWrite(buzzerPin, LOW); // Désactiver le buzzer // inhibit the buzzer
+      switch (ledLevel) {
+        case 0:
+          digitalWrite(redPin, LOW);
+          digitalWrite(greenPin, LOW);
+          digitalWrite(bluePin, LOW);
+          break;
+        case 1:
+          digitalWrite(greenPin, HIGH);
+          break;
+        case 2:
+          digitalWrite(redPin, HIGH);
+          digitalWrite(bluePin, HIGH);
+          break;
+        case 3:
+          digitalWrite(redPin, HIGH);
+          break;
+      }
+      delay(250); // 250 ms OFF
+    }
+  }
+}
+
